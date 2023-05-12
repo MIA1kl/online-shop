@@ -78,21 +78,6 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-
-    def get_total_price(self, obj):
-        cart_id = obj.cart.id
-        cart_items = Cart.objects.filter(cart=cart_id)
-        total_price = 0
-
-        for item in cart_items:
-            if item.product.discount > 0:
-                total_price += (
-                    item.cart_item_price - item.cart_item_price * item.product.discount
-                )
-            else:
-                total_price += item.cart_item_price
-        return total_price
-        
         
 class RegistrationSerializer(serializers.ModelSerializer):
 

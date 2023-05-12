@@ -50,7 +50,6 @@ class Cart(models.Model):
 
 class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.FloatField(default=0, blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
 
@@ -58,7 +57,7 @@ class Order(models.Model):
         ordering = ['-creation_date']
 
     def __str__(self):
-        return f"{self.id} {self.user} Total price: {self.total_price}"
+        return f"{self.id} Total price: {self.total_price}"
     
 
 class Comment(models.Model):

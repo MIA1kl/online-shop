@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Book, Cart, Order
+from .models import Category, Book, Cart
 from .models import Comment
 from django.contrib.auth.models import User
 
@@ -69,15 +69,24 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('cart_id', 'created_at', 'books')
+        fields = ('cart_id', 'created_at', 'books', 'total_price')
+        # read_only_fields = ['total_price']
         
-class OrderSerializer(serializers.ModelSerializer):
+    # def create(self, validated_data):
+    #     books = validated_data['books']
+    #     quantity = validated_data['quantity']
+    #     cart_item_price = books.price * quantity
 
-    total_price = serializers.SerializerMethodField()
+    #     cart = Cart.objects.create(books=books, quantity=quantity, total_price=total_price)
+    #     return cart
+        
+# class OrderSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Order
-        fields = "__all__"
+#     total_price = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Order
+#         fields = "__all__"
         
 class RegistrationSerializer(serializers.ModelSerializer):
 

@@ -7,6 +7,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = 'Categories'
+
     def __str__(self):
         return self.title
 
@@ -33,35 +34,52 @@ class Book(models.Model):
         return self.title
 
 
-
 class Cart(models.Model):
     cart_id = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    books = models.ManyToManyField(Book)
-    quantity = models.IntegerField(default=1)
-    total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
 
-    def calculate_total_price(self):
-        total = 0
-        for book in self.books.all():
-            total += book.price * self.quantity
-            print(book)
-            print(total)
-        return total
+    '''
+    Закоментировал эти части кода.. Так как смысла в них не было и через связь M2M не заработало подсчитывание общей суммы.
+    
+    
+    Скорее всего не работало по причине того, что поле M2M сохранялось после метода - save(). Что было причиной, того
+    что оно было пустой
+    '''
 
-    def save(self, *args, **kwargs):
-        self.total_price = self.calculate_total_price()
-        print(self.total_price)
-        super(Cart, self).save(*args, **kwargs)
+    # books = models.ManyToManyField(Book)
+    # quantity = models.IntegerField(default=1)
+    # total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+
+    # def calculate_total_price(self):
+    #     total = 0
+    #     for book in self.books.all().iterator():
+    #         print(book)
+    #         total += book.price * self.quantity
+    #     return total
+
+    # def save(self, *args, **kwargs):
+    #     print(args)
+    #     print(kwargs)
+    #     print(self.books)
+    #     super().save(*args, **kwargs)
+    #     self.total_price = self.calculate_total_price()
+    #     super().save()
 
     # class Meta:
     #     ordering = ['cart_id', '-created_at']
-        
 
-    # def __str__(self):
-    #     return f"{self.cart_id}"
+    def __str__(self):
+        return f"{self.cart_id}"
 
-    
+
+class OrderItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, related_name='order_items')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, related_name='order_books')
+    quantity = models.PositiveSmallIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.cart.cart_id} books - {self.book.title}"
+
 
 # class Order(models.Model):
 #     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -73,7 +91,7 @@ class Cart(models.Model):
 
 #     def __str__(self):
 #         return f"{self.id} Total price: {self.total_price}"
-    
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
-from .models import Category, Book, Cart, Comment
-from .serializers import CategorySerializer, BookSerializer, UserSerializer, CartSerializer, RegistrationSerializer, CommentSerializer
+from .models import Category, Book, Cart, Comment, OrderItem
+from .serializers import CategorySerializer, BookSerializer, UserSerializer, CartSerializer, RegistrationSerializer, \
+    CommentSerializer, OrderItemSerializer
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
@@ -76,10 +77,17 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+
 class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
+
+class OrderItemCreateAPIView(generics.ListCreateAPIView):
+
+    queryset = OrderItem.objects.all()
+    serializers_class = OrderItemSerializer
+
 
 # class OrderView(generics.ListCreateAPIView):
 #     serializer_class = OrderSerializer

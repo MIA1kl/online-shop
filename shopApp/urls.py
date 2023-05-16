@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListCategory, DetailCategory, ListBook, DetailBook, ListUser, DetailUser, ListCart, DetailCart
+from .views import ListCategory, DetailCategory, ListBook, DetailBook, ListUser, DetailUser, ListCart, DetailCart, OrderItemCreateAPIView
 from .views import CommentListCreateAPIView, CommentRetrieveUpdateDestroyAPIView
 urlpatterns = [
     path('categories', ListCategory.as_view(), name='categorie'),
@@ -17,7 +17,6 @@ urlpatterns = [
     path('comments/', CommentListCreateAPIView.as_view(), name='comment-list'),
     path('comments/<int:pk>/', CommentRetrieveUpdateDestroyAPIView.as_view(), name='comment-detail'),
     
-    # path('orders', OrderView.as_view(), name='ordera'),
-    # path('orders/<int:pk>/', OrderDetailView.as_view(), name='orderdetail'),
+    path('order-item/', OrderItemCreateAPIView.as_view(), name='order-item'),
     
 ]

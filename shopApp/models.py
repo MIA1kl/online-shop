@@ -7,6 +7,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = 'Categories'
+
     def __str__(self):
         return self.title
 
@@ -33,47 +34,22 @@ class Book(models.Model):
         return self.title
 
 
-
 class Cart(models.Model):
     cart_id = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    books = models.ManyToManyField(Book)
-    quantity = models.IntegerField(default=1)
-    total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
 
-    def calculate_total_price(self):
-        total = 0
-        for book in self.books.all():
-            total += book.price * self.quantity
-            print(book)
-            print(total)
-        return total
+    def __str__(self):
+        return f"{self.cart_id}"
 
-    def save(self, *args, **kwargs):
-        self.total_price = self.calculate_total_price()
-        print(self.total_price)
-        super(Cart, self).save(*args, **kwargs)
 
-    # class Meta:
-    #     ordering = ['cart_id', '-created_at']
-        
+class OrderItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, related_name='order_items')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, related_name='order_books')
+    quantity = models.PositiveSmallIntegerField(default=1)
 
-    # def __str__(self):
-    #     return f"{self.cart_id}"
+    def __str__(self):
+        return f"{self.cart.cart_id} books - {self.book.title}"
 
-    
-
-# class Order(models.Model):
-#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-#     total_price = models.FloatField(default=0, blank=True, null=True)
-#     creation_date = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         ordering = ['-creation_date']
-
-#     def __str__(self):
-#         return f"{self.id} Total price: {self.total_price}"
-    
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

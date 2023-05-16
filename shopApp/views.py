@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
-from .models import Category, Book, Cart, Comment
-from .serializers import CategorySerializer, BookSerializer, UserSerializer, CartSerializer, RegistrationSerializer, CommentSerializer
+from .models import Category, Book, Cart, Comment, OrderItem
+from .serializers import CategorySerializer, BookSerializer, UserSerializer, CartSerializer, RegistrationSerializer, \
+    CommentSerializer, OrderItemSerializer
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
@@ -76,46 +77,13 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+
 class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
 
-# class OrderView(generics.ListCreateAPIView):
-#     serializer_class = OrderSerializer
-#     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+class OrderItemCreateAPIView(generics.ListCreateAPIView):
 
-#     def get_queryset(self):
-#         return Order.objects.filter(user=self.request.user)
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = OrderSerializer(data=request.data)
-#         if serializer.is_valid():
-#             cart = serializer.validated_data["cart"]
-#             cart.is_order = True
-#             cart.save()
-#             serializer.save(user=self.request.user)
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-    
-    
-#     def get_total_price(self, obj):
-#         cart_id = obj.cart.id
-#         cart_items = Cart.objects.filter(cart=cart_id)
-#         total_price = 0
-
-#         for item in cart_items:
-#             if item.product.discount > 0:
-#                 total_price += (
-#                     item.cart_item_price - item.cart_item_price * item.product.discount
-#                 )
-#             else:
-#                 total_price += item.cart_item_price
-#         return total_price
-        
-
-
-# class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     serializer_class = OrderSerializer
-#     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-#     queryset = Order.objects.all()
+    queryset = OrderItem.objects.all()
+    serializers_class = OrderItemSerializer

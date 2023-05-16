@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Book, Cart
+from .models import Category, Book, Cart, OrderItem
 from .models import Comment
 from django.contrib.auth.models import User
 
@@ -64,30 +64,39 @@ class CartUserSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
 
+    #Для вывода общей суммы, используется SerializerMethodField, который вызывает total_sum
+
+    total_price = serializers.SerializerMethodField('total_sum')
     cart_id = CartUserSerializer(read_only=True, many=False)
-    books = BookSerializer(read_only=True, many=True)
 
     class Meta:
         model = Cart
-        fields = ('cart_id', 'created_at', 'books', 'total_price')
-        # read_only_fields = ['total_price']
-        
-    # def create(self, validated_data):
-    #     books = validated_data['books']
-    #     quantity = validated_data['quantity']
-    #     cart_item_price = books.price * quantity
+        fields = ('cart_id', 'created_at', 'total_price')
 
-    #     cart = Cart.objects.create(books=books, quantity=quantity, total_price=total_price)
-    #     return cart
-        
-# class OrderSerializer(serializers.ModelSerializer):
+     #Тут функция/метод total_sum работает засчёт обратной связи между моделями Cart и OrderItem.
 
-#     total_price = serializers.SerializerMethodField()
+    def total_sum(self, instance):
+        total_price = 0
+        for order_item in instance.order_items.all():
+            total_price += order_item.book.price * order_item.quantity
+        return total_price
 
-#     class Meta:
-#         model = Order
-#         fields = "__all__"
-        
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    cart = CartSerializer(read_only=True)
+    book = BookSerializer(read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = [
+            'id',
+            'cart',
+            'book',
+        ]
+
+
+
 class RegistrationSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(max_length=50, min_length=6)
